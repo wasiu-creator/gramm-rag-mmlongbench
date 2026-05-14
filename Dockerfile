@@ -30,8 +30,8 @@ RUN pip install torch-geometric && \
         -f https://data.pyg.org/whl/torch-2.3.0+cu124.html
 
 # ── Copy and install project requirements ─────────────────────────────────────
-COPY mmlongbench_benchmark/requirements.txt /app/mmlongbench_benchmark/requirements.txt
-RUN pip install -r /app/mmlongbench_benchmark/requirements.txt
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 
 # ── spaCy model ───────────────────────────────────────────────────────────────
 RUN python -m spacy download en_core_web_lg
