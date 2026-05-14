@@ -1,0 +1,9 @@
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.git/
+.ipynb_checkpoints/
+*.egg-info/
+*.dist-info/
+mmlongbench_benchmark/results/
+mmlongbench_benchmark/*.ipynb_checkpoints/

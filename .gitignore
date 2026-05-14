@@ -1,0 +1,28 @@
+# Large data — do not commit
+data/mmlongbench/pdfs/
+parsed/
+embeddings/
+graphs/
+results/
+*.pt
+*.bin
+*.safetensors
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+.env
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep QA JSON
+!data/mmlongbench/mmlongbench_doc.json

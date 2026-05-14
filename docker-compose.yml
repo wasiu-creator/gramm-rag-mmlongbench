@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  gramm-rag-mmlb:
+    build:
+      context: .           # repo root
+      dockerfile: Dockerfile
+    image: gramm-rag-mmlb:latest
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8888:8888"
+    volumes:
+      # Mount PDFs so they don't have to be baked into the image
+      - ./pdfs_volume:/app/data/mmlongbench/pdfs
+      # Persist computed artefacts between runs
+      - ./cache/parsed:/app/parsed/mmlongbench
+      - ./cache/embeddings:/app/embeddings/mmlongbench
+      - ./cache/graphs:/app/graphs/mmlongbench
+      - ./cache/results:/app/results
+    shm_size: "8gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
