@@ -46,9 +46,9 @@ COPY download_pdfs.py      /app/download_pdfs.py
 # ── Create directory structure (PDFs + artefacts mounted as volumes) ──────────
 RUN mkdir -p \
     /app/data/mmlongbench/pdfs \
-    /app/parsed/mmlongbench \
-    /app/embeddings/mmlongbench \
-    /app/graphs/mmlongbench \
+    /app/parsed \
+    /app/embeddings \
+    /app/graphs \
     /app/results/models/hgt_mmlb \
     /app/results/models/router_mmlb \
     /app/results/figures \

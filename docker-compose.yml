@@ -17,10 +17,10 @@ services:
     volumes:
       # Mount PDFs so they don't have to be baked into the image
       - ./pdfs_volume:/app/data/mmlongbench/pdfs
-      # Persist computed artefacts between runs
-      - ./cache/parsed:/app/parsed/mmlongbench
-      - ./cache/embeddings:/app/embeddings/mmlongbench
-      - ./cache/graphs:/app/graphs/mmlongbench
+      # Persist computed artefacts between runs (flat layout)
+      - ./cache/parsed:/app/parsed
+      - ./cache/embeddings:/app/embeddings
+      - ./cache/graphs:/app/graphs
       - ./cache/results:/app/results
     shm_size: "8gb"
     deploy:
