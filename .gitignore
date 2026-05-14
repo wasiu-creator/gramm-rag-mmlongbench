@@ -20,6 +20,9 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
+# Secrets — never commit
+.env
+
 # OS
 .DS_Store
 Thumbs.db

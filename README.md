@@ -53,12 +53,28 @@ cd gramm-rag-mmlongbench
 
 ## Step 2 — Set API keys
 
+Create a `.env` file in the repo root (Docker Compose reads it automatically):
+
 ```bash
-export TOGETHER_API_KEY="your-together-key"   # required — get at together.ai
-export OPENAI_API_KEY="your-openai-key"       # optional — enables KG extraction
+cp .env.example .env
+nano .env          # or use any text editor
 ```
 
-Add to `~/.bashrc` to persist across sessions.
+Fill in your keys:
+
+```
+TOGETHER_API_KEY=your-together-ai-key-here    # required — get at together.ai
+OPENAI_API_KEY=your-openai-key-here           # optional — enables KG triplet extraction
+```
+
+`.env` is listed in `.gitignore` — your keys will never be committed.
+
+> **Bare Python only:** if running without Docker, the notebook reads the same keys  
+> from environment variables. Set them in your shell before launching Jupyter:
+> ```bash
+> export TOGETHER_API_KEY="your-together-key"
+> export OPENAI_API_KEY="your-openai-key"
+> ```
 
 ## Step 3 — Install dependencies
 
