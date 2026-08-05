@@ -150,6 +150,10 @@ cleanly into the joint cross-benchmark dissertation. Single seed matches the
 deterministic (temperature=0, fixed-weights) config; rigour comes from the paired
 bootstrap, not seed averaging.
 
+**Running on JetStream2?** Follow the step-by-step
+[`JETSTREAM2_PUNCHLIST.md`](JETSTREAM2_PUNCHLIST.md) — provision → PDF download →
+keys → build → execute → collect results → shut down.
+
 ---
 
 ## Pilot mode (quick smoke-test)
