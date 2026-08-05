@@ -86,6 +86,7 @@ class VLMClient:
         prompt: str,
         temperature: float = 0.0,
         max_tokens: int = 512,
+        image_paths: Optional[list] = None,
     ) -> str:
         """
         Generate a response for the given prompt.
@@ -97,6 +98,10 @@ class VLMClient:
             prompt:      Full text prompt (from prompt_builder.build_prompt).
             temperature: Sampling temperature (0.0 = greedy).
             max_tokens:  Max output tokens.
+            image_paths: Optional list of local PNG/JPG page-image paths. When
+                         given (and the model is a vision model), the images are
+                         base64-encoded and sent alongside the text as a
+                         multimodal message. Ignored by the extractive fallback.
 
         Returns:
             Generated answer string.
@@ -107,9 +112,11 @@ class VLMClient:
         for attempt in range(self.max_retries):
             try:
                 if self.provider == "together":
-                    return self._together_generate(prompt, temperature, max_tokens)
+                    return self._together_generate(prompt, temperature, max_tokens,
+                                                   image_paths)
                 else:
-                    return self._openai_generate(prompt, temperature, max_tokens)
+                    return self._openai_generate(prompt, temperature, max_tokens,
+                                                 image_paths)
 
             except Exception as e:
                 if attempt < self.max_retries - 1:
@@ -122,20 +129,50 @@ class VLMClient:
 
         return "[GENERATION_ERROR]"
 
-    def _together_generate(self, prompt: str, temperature: float, max_tokens: int) -> str:
+    @staticmethod
+    def _encode_image(path: str) -> Optional[str]:
+        """Read a local image file → base64 data URI, or None on failure."""
+        import base64
+        try:
+            with open(path, "rb") as f:
+                b64 = base64.b64encode(f.read()).decode("ascii")
+            ext = os.path.splitext(path)[1].lstrip(".").lower() or "png"
+            mime = "jpeg" if ext in ("jpg", "jpeg") else ext
+            return f"data:image/{mime};base64,{b64}"
+        except Exception as e:
+            logger.warning(f"image encode failed for {path}: {e}")
+            return None
+
+    def _build_messages(self, prompt: str, image_paths: Optional[list]) -> list:
+        """OpenAI-style messages; multimodal content list when images are given."""
+        if not image_paths:
+            return [{"role": "user", "content": prompt}]
+        content = [{"type": "text", "text": prompt}]
+        for p in image_paths:
+            uri = self._encode_image(p)
+            if uri:
+                content.append({"type": "image_url", "image_url": {"url": uri}})
+        # If every image failed to encode, fall back to a plain text message.
+        if len(content) == 1:
+            return [{"role": "user", "content": prompt}]
+        return [{"role": "user", "content": content}]
+
+    def _together_generate(self, prompt: str, temperature: float, max_tokens: int,
+                           image_paths: Optional[list] = None) -> str:
         resp = self._client.chat.completions.create(
             model=self.together_model,
-            messages=[{"role": "user", "content": prompt}],
+            messages=self._build_messages(prompt, image_paths),
             temperature=temperature,
             max_tokens=max_tokens,
         )
         time.sleep(0.5)   # rate-limit courtesy delay
         return resp.choices[0].message.content.strip()
 
-    def _openai_generate(self, prompt: str, temperature: float, max_tokens: int) -> str:
+    def _openai_generate(self, prompt: str, temperature: float, max_tokens: int,
+                         image_paths: Optional[list] = None) -> str:
         resp = self._client.chat.completions.create(
             model=self.openai_model,
-            messages=[{"role": "user", "content": prompt}],
+            messages=self._build_messages(prompt, image_paths),
             temperature=temperature,
             max_tokens=max_tokens,
         )

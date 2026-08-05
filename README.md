@@ -136,11 +136,19 @@ The notebook runs all 10 phases end-to-end (~3–6 hours on A100 80 GB).
 | 5 | Train HGT (50 epochs, InfoNCE) | `results/models/hgt_mmlb/` |
 | 6 | Fine-tune DeBERTa-v3 router (3 epochs) | `results/models/router_mmlb/` |
 | 7 | Reward function grid search | `results/models/reward_mmlb.json` |
-| 8 | Flat-vector RAG baseline | `results/baseline_vector_mmlb.json` |
-| 9 | GraMM-RAG × 3 seeds | `results/gramm_mmlongbench_s{42,123,456}.json` |
-| 10 | Comparison table | `results/summary_mmlb.json` |
+| 8 | Flat-vector RAG baseline (FAISS + cross-encoder) | `results/baseline_vector_mmlb.json` |
+| 9 | GraMM-RAG (single seed: route → fuse → graph-page-guide → self-heal → gen) | `results/gramm_mmlongbench_s42.json` |
+| 10 | Tables, APPA, paired bootstrap, conversion funnel, figures | `results/summary_mmlb.json` · `results/analysis_mmlb.json` · `results/analysis_extended_mmlb.json` |
 
-**Estimated API cost:** ~$22 (Qwen2.5-VL-72B × 3 seeds × 1,091 questions)
+**Estimated API cost:** ~$8 (Qwen2.5-VL-72B × single seed × 1,091 questions)
+
+This notebook mirrors the **executed/proven MP-DocVQA pipeline**: cross-encoder
+reranking, true-hybrid fusion, graph-guided page selection, generation-stage
+self-healing, config-aware result caching (`RUN_CONFIG`), and the full
+paired-bootstrap + conversion-funnel analysis suite — so MMLongBench results merge
+cleanly into the joint cross-benchmark dissertation. Single seed matches the
+deterministic (temperature=0, fixed-weights) config; rigour comes from the paired
+bootstrap, not seed averaging.
 
 ---
 
